@@ -1,9 +1,9 @@
-import './style.css';
+import "./style.css";
 
-const countriesContainer = document.querySelector('.countries');
-const countryInput = document.querySelector('#input');
+const countriesContainer = document.querySelector(".countries");
+const countryInput = document.querySelector("#input");
 
-const renderCountry = (data, className = '') => {
+const renderCountry = (data, className = "") => {
   const [lang] = Object.values(data.languages);
 
   const html = `
@@ -14,52 +14,62 @@ const renderCountry = (data, className = '') => {
       <h4 class="country__region">${data.region}</h4>
       <p class="country__row"><span>🌆</span>${data.capital}</p>
       <p class="country__row"><span>👫</span>${(
-    +data.population / 1000000
-  ).toFixed(1)} people</p>
+        +data.population / 1000000
+      ).toFixed(1)} people</p>
       <p class="country__row"><span>🗣️</span>${lang}</p>
 
     </div>
   </article>
   `;
 
-  countriesContainer.insertAdjacentHTML('beforeend', html);
+  countriesContainer.insertAdjacentHTML("beforeend", html);
   countriesContainer.style.opacity = 1;
 };
 
-// Using Fetch
+const getJson = (url, errMsg) => {
+  return fetch(url).then((res) => {
+    if (!res.ok) throw new Error(errMsg);
+    return res.json();
+  });
+};
 
+// Using Fetch
 const getCountryData = (country) => {
-  countriesContainer.innerHTML = '';
+  countriesContainer.innerHTML = "";
 
   // Get Country
-  fetch(`https://restcountries.com/v3.1/name/${country}`)
-    .then((res) => res.json())
+  getJson(`https://restcountries.com/v3.1/name/${country}`, "Country Not Found")
     .then((data) => {
       const [countryData] = data;
 
       renderCountry(countryData);
 
+      if (!countryData.borders) throw new Error("No Neighbour Found");
+
       const [neighbour] = countryData.borders;
 
       // Get neighbour
-      return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`);
+      return getJson(
+        `https://restcountries.com/v3.1/alpha/${neighbour}`,
+        "Neighbour Not Found"
+      );
     })
-    .then((res) => res.json())
     .then((data) => {
       const [neighbourData] = data;
-      renderCountry(neighbourData, 'neighbour');
-    });
+      renderCountry(neighbourData, "neighbour");
+    })
+    .catch((err) => console.log(err));
 };
 
-countryInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
+countryInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
     const countryInp = countryInput.value;
 
     if (!countryInp) return;
 
     getCountryData(countryInp);
 
-    countryInput.value = '';
+    countryInput.value = "";
   }
 });
 

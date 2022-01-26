@@ -1,8 +1,10 @@
-![](https://img.shields.io/badge/Microverse-blueviolet)
-
 # Countries
 
 > ### In this project, you can search for any country that you want to know information about. Build with RestCountry API, javaScript, CSS, HTML
+
+
+https://user-images.githubusercontent.com/45231276/151081753-af74063c-0a67-4110-92f0-c9909315889e.mp4
+
 
 ## Built With
 

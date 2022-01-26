@@ -26,29 +26,37 @@ const renderCountry = (data, className = '') => {
   countriesContainer.style.opacity = 1;
 };
 
-// Using Fetch
+const getJson = (url, errMsg) => fetch(url).then((res) => {
+  if (!res.ok) throw new Error(errMsg);
+  return res.json();
+});
 
+// Using Fetch
 const getCountryData = (country) => {
   countriesContainer.innerHTML = '';
 
   // Get Country
-  fetch(`https://restcountries.com/v3.1/name/${country}`)
-    .then((res) => res.json())
+  getJson(`https://restcountries.com/v3.1/name/${country}`, 'Country Not Found')
     .then((data) => {
       const [countryData] = data;
 
       renderCountry(countryData);
 
+      if (!countryData.borders) throw new Error('No Neighbour Found');
+
       const [neighbour] = countryData.borders;
 
       // Get neighbour
-      return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`);
+      return getJson(
+        `https://restcountries.com/v3.1/alpha/${neighbour}`,
+        'Neighbour Not Found',
+      );
     })
-    .then((res) => res.json())
     .then((data) => {
       const [neighbourData] = data;
       renderCountry(neighbourData, 'neighbour');
-    });
+    })
+    .catch((err) => alert(err));
 };
 
 countryInput.addEventListener('keypress', (e) => {

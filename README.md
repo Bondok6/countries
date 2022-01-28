@@ -28,9 +28,9 @@ To get a local copy up and running follow these simple example steps.
 
 `git clone git@github.com:Bondok6/countries.git`
 
-Then `npm install` to install packages
-
 Then `cd countries`
+
+Then `npm install` to install packages
 
 Finally `npm run start`
 

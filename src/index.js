@@ -26,10 +26,12 @@ const renderCountry = (data, className = '') => {
   countriesContainer.style.opacity = 1;
 };
 
-const getJson = (url, errMsg) => fetch(url).then((res) => {
+const getJson = async (url, errMsg) => {
+  const res = await fetch(url);
   if (!res.ok) throw new Error(errMsg);
-  return res.json();
-});
+  const data = await res.json();
+  return data;
+};
 
 // Using Fetch
 const getCountryData = (country) => {
@@ -70,35 +72,3 @@ countryInput.addEventListener('keypress', (e) => {
     countryInput.value = '';
   }
 });
-
-// Old Way using XMLHttpRequest()
-
-// const getCountry = function (country) {
-//   const request = new XMLHttpRequest();
-//   request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
-//   request.send();
-
-//   request.addEventListener('load', function () {
-//     const [data] = JSON.parse(this.responseText);
-//     console.log(data);
-
-//     renderCountry(data);
-
-//     // Get neighbours
-//     const [neighbours] = data.borders;
-
-//     if (!neighbours) return;
-
-//     const request2 = new XMLHttpRequest();
-//     request2.open('GET', `https://restcountries.com/v3.1/alpha/${neighbours}`);
-//     request2.send();
-
-//     request2.addEventListener('load', function () {
-//       const [neighbourData] = JSON.parse(this.responseText);
-//       console.log(neighbourData);
-//       renderCountry(neighbourData, 'neighbour');
-//     });
-//   });
-// };
-
-// getCountry('egypt');

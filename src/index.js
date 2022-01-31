@@ -28,37 +28,34 @@ const renderCountry = (data, className = '') => {
 
 const getJson = async (url, errMsg) => {
   const res = await fetch(url);
-  if (!res.ok) throw new Error(errMsg);
+  if (!res.ok) alert(errMsg);
   const data = await res.json();
   return data;
 };
 
 // Using Fetch
-const getCountryData = (country) => {
+const getCountryData = async (country) => {
   countriesContainer.innerHTML = '';
 
   // Get Country
-  getJson(`https://restcountries.com/v3.1/name/${country}`, 'Country Not Found')
-    .then((data) => {
-      const [countryData] = data;
+  const data = await getJson(
+    `https://restcountries.com/v3.1/name/${country}`,
+    'Country Not Found',
+  );
 
-      renderCountry(countryData);
+  const [countryData] = data;
 
-      if (!countryData.borders) throw new Error('No Neighbour Found');
+  renderCountry(countryData);
 
-      const [neighbour] = countryData.borders;
+  const [neighbour] = countryData.borders;
 
-      // Get neighbour
-      return getJson(
-        `https://restcountries.com/v3.1/alpha/${neighbour}`,
-        'Neighbour Not Found',
-      );
-    })
-    .then((data) => {
-      const [neighbourData] = data;
-      renderCountry(neighbourData, 'neighbour');
-    })
-    .catch((err) => alert(err));
+  // Get neighbour
+  const data2 = await getJson(
+    `https://restcountries.com/v3.1/alpha/${neighbour}`,
+    'Neighbour Not Found',
+  );
+  const [neighbourData] = data2;
+  renderCountry(neighbourData, 'neighbour');
 };
 
 countryInput.addEventListener('keypress', (e) => {
